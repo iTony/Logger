@@ -1,0 +1,3 @@
+2014-01-10 15:18:48.593 [] [] [Windows XP Professionel 32bits Service Pack 3]
+2014-01-10 15:18:48.640 Debug [MainThread] (_tmain) hello world
+2014-01-10 15:18:48.640 Info [MainThread] (_tmain) infomation
