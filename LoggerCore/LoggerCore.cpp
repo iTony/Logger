@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "LoggerCore.h"
+#include <stdio.h>
+#include <io.h>
+
 #pragma comment(lib, "version.lib")
 bool IsWinNT = false;
 bool IsWinNT6 = false;
@@ -36,18 +39,170 @@ LOGGERCORE_API void __stdcall AddThreadCore(const char* name)
 	threadMap.insert(map<int,string>::value_type(id,n));
 }
 
+void PathParse(const char *path)
+{
+	//printf("%d,path:%s\n",strlen(path),path);
+	bool flag = false;
+	char* pos = (char *)path;
+	int index = 0;
+	int num = 0;
+	int count = 0;
+	int numpos = 0;
+
+	char d[10];
+	memset(d,0,strlen(d));
+	int dpos = 0;
+	//tring path = filePath;
+	char tmp[MAX_PATH];
+	memset(tmp,0,strlen(tmp));
+	char time[15];
+	memset(time,0,strlen(time));
+	int size = strlen(path);
+	for (int i=0;i<size;i++)
+	{
+
+		if (pos[i]=='%')
+		{
+			flag = true;
+			i++;
+			if (pos[i]=='t')
+			{
+				SYSTEMTIME sys;
+				GetLocalTime( &sys );
+				sprintf(time,"%4d%02d%02d%02d%02d%02d\0",
+					sys.wYear,sys.wMonth, sys.wDay, sys.wHour, sys.wMinute,sys.wSecond);
+				for(int j=0;j<strlen(time);j++)
+				{
+					tmp[index] = time[j];
+					index++;
+				}
+			}
+			else if (pos[i]=='d')
+			{
+				if (dpos ==0)
+				{
+					numpos = index;
+					tmp[index] = '0';
+					index++;
+					count++;
+				}
+				else
+				{
+					num = atoi(d);
+					count = strlen(d);
+					for(int j=0;j<dpos;j++)
+					{
+						tmp[index] = d[j];
+						index++;
+					}
+				}
+			}
+			else if (pos[i]<='9'&&pos[i]>='0')
+			{
+				numpos = index;
+				while(1)
+				{
+					if (pos[i]=='d')
+					{
+						break;
+					}
+					tmp[index]=pos[i];
+					index++;
+					d[dpos] = pos[i];
+					dpos++;
+					i++;
+				}
+				
+			}
+		}
+		else
+		{
+			tmp[index]=pos[i];
+			index++;
+		}
+	}
+	//fout.open(tmp);
+	//printf("%d\n",index);
+	tmp[index] = '\0';
+	while ((access( tmp, 0 )) != -1&&flag)
+	{
+		num++;
+		itoa(num,d,10);
+		if (dpos==0||dpos<strlen(d))
+		{
+			char t[128];
+			memset(t,0,strlen(t));
+			int tc = 0;
+			for (int i=0;i<strlen(tmp);i++)
+			{
+				if (i==numpos)
+				{
+					for (int j=0;j<strlen(d);j++)
+					{
+						t[tc] = d[j];
+						tc++;
+						
+					}
+					for (int j=0;j<count;j++)
+					{
+						i++;
+					}
+					
+				}
+				t[tc] = tmp[i];
+				tc++;
+			}
+			memset(tmp,0,strlen(tmp));
+			for (int i=0;i<tc;i++)
+			{
+				tmp[i] = t[i];
+			}
+			tmp[tc]='\0';
+			count = strlen(d);
+			//fout.open(t);
+		}
+		else
+		{
+			int j=0;
+			for(int i=dpos-strlen(d);i<dpos;i++)
+			{
+				tmp[numpos+i]=d[j];
+				j++;
+			}
+			//fout.open(tmp);
+		}
+	}
+	//printf("%d,tmp:%s",strlen(tmp),tmp);
+	fout.open(tmp);
+}
+
 void InitCore()
 {
 	//printf("init\n");
+	if (softwareName == "")
+	{
+		TCHAR szFullPath[MAX_PATH];
+		GetModuleFileName(NULL, szFullPath, sizeof(szFullPath));
+		char * ch=new char[MAX_PATH];
+		WideCharToMultiByte(CP_OEMCP,NULL,szFullPath,-1,ch,sizeof(szFullPath),NULL,FALSE);
+		
+		softwareName.append(ch);
+
+		int index = softwareName.rfind("\\");
+		string sub = softwareName.substr(index+1);
+		softwareName = sub;
+	}
 	m_mutex = ::CreateMutex(NULL, FALSE, NULL);
 	time = GetTime();
 	osInfo = GetOSVer();
-	libVersion = GetDllVersion();
+	//libVersion = GetDllVersion();
+	libVersion.assign("1.0.0.1");
 	//libVersion = GetDllVersion("LoggerCore.dll");
 }
 
 LOGGERCORE_API void __stdcall InitCore1(const char* fpath,const char* swname)
 {
+	PathParse(fpath);
 	//libVersion += libver;
 	filePath += fpath;
 	softwareName += swname;
@@ -57,7 +212,7 @@ LOGGERCORE_API void __stdcall InitCore1(const char* fpath,const char* swname)
 
 LOGGERCORE_API void __stdcall InitCore2(const char* fpath,const char* swname,int mb)
 {
-	
+	PathParse(fpath);
 	filePath += fpath;
 	softwareName += swname;
 	maxBuffer = mb;
@@ -66,7 +221,7 @@ LOGGERCORE_API void __stdcall InitCore2(const char* fpath,const char* swname,int
 
 LOGGERCORE_API void __stdcall RunCore()
 {
-	remove(filePath.c_str());
+	//remove(filePath.c_str());
 // 	fstream _file;
 // 	_file.open(filePath,ios::in);
 // 	if (_file)
@@ -80,7 +235,7 @@ LOGGERCORE_API void __stdcall RunCore()
 // 			printf("remove file fail");
 // 		}
 // 	}
-	fout.open(filePath);
+	//fout.open(filePath);
 	
 	//printf("filepath: %s\n",filePath.c_str());
 	char info[512];

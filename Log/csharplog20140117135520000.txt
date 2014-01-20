@@ -1,0 +1,13 @@
+2014-01-17 13:55:20.769 [1.0.0.1] [CsharpTest.vshost.exe] [Windows XP Professionel 32bits Service Pack 3]
+2014-01-17 13:55:20.785 Info [MainThread] CsharpTest.Program(Main,17) ddd
+2014-01-17 13:55:20.785 Debug [MainThread] CsharpTest.Program(Main,18) hello world
+2014-01-17 13:55:20.801 Info [thread] CsharpTest.Program(ThreadProc,42) ThreadPorc: world
+2014-01-17 13:55:20.801 Info [thread123] CsharpTest.Program(ThreadProc1,53) ThreadPorc1: hello
+2014-01-17 13:55:20.894 Info [thread] CsharpTest.Program(ThreadProc,42) ThreadPorc: world
+2014-01-17 13:55:20.894 Info [thread123] CsharpTest.Program(ThreadProc1,53) ThreadPorc1: hello
+2014-01-17 13:55:21.004 Info [thread] CsharpTest.Program(ThreadProc,42) ThreadPorc: world
+2014-01-17 13:55:21.004 Info [thread123] CsharpTest.Program(ThreadProc1,53) ThreadPorc1: hello
+2014-01-17 13:55:21.097 Info [thread] CsharpTest.Program(ThreadProc,42) ThreadPorc: world
+2014-01-17 13:55:21.097 Info [thread123] CsharpTest.Program(ThreadProc1,53) ThreadPorc1: hello
+2014-01-17 13:55:21.191 Info [thread] CsharpTest.Program(ThreadProc,42) ThreadPorc: world
+2014-01-17 13:55:21.207 Info [thread123] CsharpTest.Program(ThreadProc1,53) ThreadPorc1: hello

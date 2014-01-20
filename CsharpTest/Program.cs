@@ -12,7 +12,7 @@ namespace CsharpTest
         static void Main(string[] args)
         {
             Logger logger = Logger.GetLogger();
-            logger.Init("E:\\GitHub\\Logger\\log.txt");
+            logger.Init("E:\\Test\\Log\\csharplog%t%000d.txt");
             logger.Run();
             logger.Info("ddd");
             logger.Debug("hello world");
@@ -29,7 +29,7 @@ namespace CsharpTest
 //             t2.Join();
 //             t3.Join();
             logger.Finish();
-           // Console.ReadKey();
+            //Console.ReadKey();
         }
 
         private static void ThreadProc()

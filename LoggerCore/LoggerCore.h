@@ -28,6 +28,7 @@ map<int,string> threadMap;
 HANDLE m_mutex;
 
 void InitCore();
+void PathParse(const char* path);
 void Add(string className,string funName,int lineNum,string message);
 string GetTime();
 string GetOSVer();

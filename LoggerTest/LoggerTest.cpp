@@ -20,7 +20,7 @@ DWORD WINAPI ThreadFun(LPVOID pM)
 	memset(msg,0,256);
 	sprintf(msg,"子线程的线程ID号为：%d 子线程输出Hello World\n", id);
 
-	for (int i=0;i<100;i++)
+	for (int i=0;i<10;i++)
 	{
 
 		logger->Debug("NULL","ThreadFun",msg);
@@ -28,8 +28,7 @@ DWORD WINAPI ThreadFun(LPVOID pM)
 		logger->Info("NULL","ThreadFun","Hello World");
 
 	}
-	//file<<"Hello file----"<<id<<"\n";
-
+	
 	return 0;  
 }  
 
@@ -40,16 +39,15 @@ void ThreadLogTest()
 	//Logger logger = Logger.GetLogger("log");
 	HANDLE handle1 = CreateThread(NULL, 0, ThreadFun, (LPVOID)1, 0, NULL);
 	HANDLE handle2 = CreateThread(NULL, 0, ThreadFun, (LPVOID)2, 0, NULL);
-	HANDLE handle3 = CreateThread(NULL, 0, ThreadFun, (LPVOID)3, 0, NULL);
-	HANDLE handle4 = CreateThread(NULL, 0, ThreadFun, (LPVOID)4, 0, NULL);
+	//HANDLE handle3 = CreateThread(NULL, 0, ThreadFun, (LPVOID)3, 0, NULL);
+	//HANDLE handle4 = CreateThread(NULL, 0, ThreadFun, (LPVOID)4, 0, NULL);
 	//getchar();
 	WaitForSingleObject(handle1,INFINITE);
 	WaitForSingleObject(handle2,INFINITE);
-	WaitForSingleObject(handle3,INFINITE);
-	WaitForSingleObject(handle4,INFINITE);
+	//WaitForSingleObject(handle3,INFINITE);
+	//WaitForSingleObject(handle4,INFINITE);
 	//logger->Finish();
 }
-
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -57,7 +55,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//LogInfo info("log.txt");
 	//info.SetFilePath("log.txt");
-	logger->Init("E:\\GitHub\\LoggerCore\\CsharpTest\\log.txt");
+	logger->Init("E:\\Test\\Log\\cpplog%t%d.txt");
 	//logger->SetFilePath("log.txt");
 	logger->Run();
 
@@ -65,7 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	logger->Info("","_tmain","infomation");
 	ThreadLogTest();
 	logger->Finish();
-	getchar();
+	//getchar();
 	return 0;
 }
 

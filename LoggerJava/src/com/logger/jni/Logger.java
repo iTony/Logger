@@ -32,11 +32,15 @@ public class Logger {
 	}
 	
 	public void Init(String path){
-		Init(path,"");
+		String projectname = System.getProperty("user.dir");  
+		String pn = projectname.substring(projectname.lastIndexOf('\\')+1,projectname.length());
+		Init(path,pn);
 	}
 	
 	public void Init(String path,int maxBuf){
-		Init(path,"",maxBuf);
+		String projectname = System.getProperty("user.dir");  
+		String pn = projectname.substring(projectname.lastIndexOf('\\')+1,projectname.length());
+		Init(path,pn,maxBuf);
 	}
 	
 	public void Debug(String message){

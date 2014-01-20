@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LogMsg.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestCast.h" />
@@ -90,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="TestCast.cpp" />
     <ClCompile Include="TestReport.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LoggerCompare.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

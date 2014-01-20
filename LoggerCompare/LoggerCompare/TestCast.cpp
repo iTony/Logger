@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "TestCast.h"
 #include <fstream>
+#include <io.h>
 #include "LogMsg.h"
 
 using namespace std;
@@ -10,8 +11,14 @@ TestCase::TestCase(void)
 	rightCount = 0;
 	wrongCount = 0;
 	ExceptionCount = 0;
-}
+	numd = 0;
+	posd = 0;
+	filepath = new char[MAX_PATH];
+	memset(filepath,0,MAX_PATH);
+	xmlPath = "";
+	htmlPath = "";
 
+}
 
 TestCase::~TestCase(void)
 {
@@ -49,6 +56,79 @@ void TestCase::GetRecordLog(char* path)
 
 void TestCase::GetPlaybackLog(char* path)
 {
+	char* pos = path;
+	int t = 0;
+	//char temp[MAX_PATH];
+	//memset(temp,0,strlen(temp));
+	int len = strlen(path);
+	
+	for (int i=0;i<len;i++)
+	{
+		if (pos[i]=='%')
+		{
+			i++;
+			int pd = t;
+			int count = 0;
+			char tmp[10];
+			memset(tmp,0,10);
+			int n =0;
+			while(pos[i]>='0'&&pos[i]<='9')
+			{
+				filepath[t] = pos[i];
+				tmp[n] = pos[i];
+				i++;
+				t++;
+				count++;
+			}
+			if (pos[i]=='t')
+			{
+				int j = 14-count;
+				for (int j=0;j<14-count;j++)
+				{
+					filepath[t] = '%';
+					t++;
+				}
+			}
+			else if(pos[i]=='d')
+			{
+				if (count == 0)
+				{
+					filepath[t] = '0';
+					t++;
+					numd = 1;
+				}
+				else
+				{
+					numd = count;
+				}
+				cnum = atoi(tmp);
+				
+				posd = pd;
+			}
+		}
+		else
+		{
+			filepath[t] = pos[i];
+			t++;
+		}
+	}
+	filepath[t] = '\0';
+}
+
+void TestCase::ClearPlaybackLog()
+{
+	vector<LogMsg*>::iterator it;
+	for (it=playbackList.begin();it!=playbackList.end();it++)
+	{
+		delete *it;
+
+	}
+	playbackList.clear();
+}
+
+void TestCase::GetPlaybackFile(char* path)
+{
+	ClearPlaybackLog();
 	char buffer[512];
 	memset(buffer,0,sizeof(buffer));
 	ifstream  fin;
@@ -82,8 +162,8 @@ LogMsg* TestCase::GetLogMsg(char* buffer)
 	memset(message,'\0',sizeof(message));
 
 	char *pbuf = buffer+sizeof(time);
-	memcpy(time,buffer,sizeof(time));
-
+	memcpy(time,buffer,sizeof(time)-1);
+	time[23]='\0';
 	int i=0;
 	while(*pbuf!=' ')
 	{
@@ -129,7 +209,7 @@ LogMsg* TestCase::GetLogMsg(char* buffer)
 	pbuf++;
 
 	strcpy(message,pbuf);
-	int size = sizeof(time);
+	//int size = sizeof(time);
 	LogMsg* msg = new LogMsg(time,level,clsName,funName,thread,message);
 	return msg;
 }
@@ -146,12 +226,13 @@ void TestCase::RecordSort()
 			threadName.push_back(thread);
 			tname = thread;
 		}
-		string thread1 = recordList[i+1]->GetThread();
+		int t=i+1;
+		string thread1 = recordList[t]->GetThread();
 		if (thread1 == thread)
 		{
 			continue;
 		}
-		int t=i+1;
+		
 		int j=t;
 		for (j++;j<recordList.size();j++)
 		{
@@ -159,9 +240,12 @@ void TestCase::RecordSort()
 			string trd = recordList[j]->GetThread();
 			if (thread==trd)
 			{
-				LogMsg* log = recordList[j];
-				recordList[j] = recordList[t];
-				recordList[t] = log;
+				for (int a=j;a>t;a--)
+				{
+					LogMsg* log = recordList[a];
+					recordList[a] = recordList[a-1];
+					recordList[a-1] = log;
+				}
 				t++;
 				i++;
 			}
@@ -180,11 +264,11 @@ void TestCase::PlaybackSort()
 		{
 			if (playbackList[cur]->GetThread()==name)
 			{
-				if (num!=cur)
+				for (int i=cur;i>num;i--)
 				{
-					LogMsg *log = playbackList[num];
-					playbackList[num] = playbackList[cur];
-					playbackList[cur] = log;
+					LogMsg *log = playbackList[i];
+					playbackList[i] = playbackList[i-1];
+					playbackList[i-1] = log;
 				}
 				num++;
 			}
@@ -192,12 +276,31 @@ void TestCase::PlaybackSort()
 	}
 }
 
-void TestCase::Compare()
+void TestCase::ClearTestReport()
 {
-	bool flag = true;
+	vector<TestReport*>::iterator it;
+	for (it=reportList.begin();it!=reportList.end();it++)
+	{
+		delete *it;
+
+	}
+	reportList.clear();
+}
+
+void TestCase::CreateTestReport()
+{
+	rightCount = 0;
+	wrongCount = 0;
+	ExceptionCount = 0;
+	ClearTestReport();
+	int flag = 0;
 	if (recordList.size()>playbackList.size())
 	{
-		flag = false;
+		flag = 1;
+	}
+	if (recordList.size()<playbackList.size())
+	{
+		flag = 2;
 	}
 	for (int i=0,j=0;i<recordList.size();i++,j++)
 	{
@@ -233,20 +336,161 @@ void TestCase::Compare()
 		{
 			result = "Exception";
 			ExceptionCount++;
-			if (flag)
+			if (flag == 2)
 			{
 				TestReport* report = new TestReport("NULL","NULL","NULL","NULL","NULL",playback->GetMessage(),result);
 				reportList.push_back(report);
 				j++;
 			}
-			else
+			else if(flag == 1)
 			{
 				TestReport* report = new TestReport(level,clsName,funName,thread,message,"NULL",result);
 				reportList.push_back(report);
 				i++;
 			}
+			else
+			{
+				TestReport* report = new TestReport(level,clsName,funName,thread,message,playback->GetMessage(),result);
+				reportList.push_back(report);
+			}
 		}
 	}
+}
+
+void TestCase::Compare()
+{
+	int len = strlen(filepath)-1;
+
+	for (;len>=0;len--)
+	{
+		if (filepath[len] == '\\')
+		{
+			break;
+		}
+	}
+	posd = posd - len-1;
+	TCHAR szFind[100] ;
+	memset(szFind,0,100);
+
+	MultiByteToWideChar(CP_OEMCP,0,filepath,-1,szFind,len+1);
+	szFind[len+1] = '*';
+	char *file = filepath+len+1;
+	WIN32_FIND_DATA fdata = {0};
+	HANDLE hFind = FindFirstFile(szFind,&fdata);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+	do 
+	{
+		if (fdata.cFileName[0] == '.')
+		{
+			continue;
+		}
+		if (fdata.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
+		{
+			continue;
+		}
+		else
+		{
+			//TCHAR* szFile = fdata.cFileName;
+			char szFile[100];
+			memset(szFile,0,100);
+			WideCharToMultiByte(CP_OEMCP,NULL,fdata.cFileName,-1,szFile,sizeof(fdata.cFileName),NULL,FALSE);
+			int size = strlen(szFile);
+			bool flag = true;
+
+			for (int i=0,m=0;i<size;i++,m++)
+			{
+				if (i == posd)
+				{
+					char tmp[10];
+					memset(tmp,0,sizeof(tmp));
+					int n = 0;
+					for (;i<size;i++)
+					{
+						if (file[i]==szFile[m+numd])
+						{
+							int cn = atoi(tmp);
+							if (cn<cnum)
+							{
+								flag = false;
+								break;
+							}
+							break;
+						}
+						if (file[i]<'0'||file[i]>'9')
+						{
+							flag = false;
+							break;
+						}
+						tmp[n] = file[i];
+						n++;
+						//m++;
+					}
+					if (i==size)
+					{
+						int cn = atoi(tmp);
+						if (cn<cnum)
+						{
+							flag = false;
+							break;
+						}
+						
+					}
+					m+=numd;
+					m--;
+					i--;
+				}
+				else if (file[i]!=szFile[m]&&'%'!= file[i])
+				{
+					flag = false;
+					break;
+				}
+				
+			}
+			if (flag)
+			{
+				int szlen = strlen(szFile);
+				int szflag = 0;
+				int llen = len+1;
+				char tpath[MAX_PATH];
+				memset(tpath,0,MAX_PATH);
+				memcpy(tpath,filepath,strlen(filepath));
+				for (int i=0;i<szlen;i++)
+				{
+					tpath[llen+i]=szFile[i];
+					if (szFile[i] == '.')
+					{
+						szflag = i;
+					}
+				}
+				tpath[llen+szlen] = '\0';
+				szFile[szflag+1] = '\0';
+				GetPlaybackFile(tpath);
+				CreateTestReport();
+				if (xmlPath!="")
+				{
+					string xml = xmlPath;
+					xml.append("\\");
+					xml.append(szFile);
+					xml.append("xml");
+					CreateReportXML((char *)xml.c_str());
+				}
+				if (htmlPath!="")
+				{
+					string html = htmlPath;
+					html.append("\\");
+					html.append(szFile);
+					html.append("html");
+					CreateReportHTML((char *)html.c_str());
+				}
+			}
+
+		}
+
+	} while (FindNextFile(hFind,&fdata));
+	FindClose(hFind);
 }
 
 void TestCase::CreateReportXML(char* path)
