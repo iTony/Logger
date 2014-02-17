@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoggerJNI", "LoggerJNI\Logg
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoggerCompare", "LoggerCompare\LoggerCompare\LoggerCompare.vcxproj", "{CED767C4-C78C-44E1-A73E-B23BA762CF33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,18 @@ Global
 		{CED767C4-C78C-44E1-A73E-B23BA762CF33}.Release|Win32.ActiveCfg = Release|Win32
 		{CED767C4-C78C-44E1-A73E-B23BA762CF33}.Release|Win32.Build.0 = Release|Win32
 		{CED767C4-C78C-44E1-A73E-B23BA762CF33}.Release|x86.ActiveCfg = Release|Win32
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Release|Win32.ActiveCfg = Release|Any CPU
+		{96EA2050-0B0D-4A08-A310-DFF533C6C3ED}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

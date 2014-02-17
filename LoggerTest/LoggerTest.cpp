@@ -17,16 +17,15 @@ DWORD WINAPI ThreadFun(LPVOID pM)
 	//Logger logger = Logger::GetLogger("log1.txt");
 	int id = GetCurrentThreadId();
 	char msg[256];
-	memset(msg,0,256);
-	sprintf(msg,"子线程的线程ID号为：%d 子线程输出Hello World\n", id);
-
 	for (int i=0;i<10;i++)
 	{
-
+		memset(msg,0,256);
+		sprintf(msg,"子线程输出Hello World%d\n",i);
 		logger->Debug("NULL","ThreadFun",msg);
 		Sleep(10);
 		logger->Info("NULL","ThreadFun","Hello World");
-
+		logger->Warn("NULL","ThreadFun","WarnTest");
+		logger->Error("NULL","ThreadFun","ErrorTest");
 	}
 	
 	return 0;  
@@ -59,8 +58,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//logger->SetFilePath("log.txt");
 	logger->Run();
 
-	logger->Debug("","_tmain","hello world");
-	logger->Info("","_tmain","infomation");
+	logger->Debug("NULL","_tmain","hello world");
+	logger->Info("NULL","_tmain","infomation");
 	ThreadLogTest();
 	logger->Finish();
 	//getchar();

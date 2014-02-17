@@ -4,14 +4,27 @@
 #include "stdafx.h"
 #include "TestCast.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
+	if (argc <3)
+	{
+		printf("please input RecordLog, PlaybackLog,XMLReportPath,HTMLReportPath");
+		return -1;
+	}
+	//printf("%d\n",argc);
 	TestCase tc ;
-	tc.GetRecordLog("E:\\Test\\Log\\csharplog.txt");
-	tc.GetPlaybackLog("E:\\Test\\Log\\csharplog%2014012014t%000d.txt");
-	tc.SetHTMLReportPath("E:\\Test\\Log\\Report");
-	tc.SetXMLReportPath("E:\\Test\\Log\\Report");
+	
+	char * rlog = (char *)argv[1];
 
+	tc.GetRecordLog((char *)argv[1]);
+	tc.GetPlaybackLog((char *)argv[2]);
+	tc.SetXMLReportPath((char *)argv[3]);
+	if (argc == 5)
+	{
+		tc.SetHTMLReportPath((char *)argv[4]);
+	}
+	
+	
 	tc.Compare();
 	
 	//delete tc;

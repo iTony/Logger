@@ -8,26 +8,26 @@ using System.Diagnostics;
 
 namespace LoggerCsharp
 {
-    public class Logger
+    public sealed class Logger
     {
         [DllImport("LoggerCore.dll", EntryPoint = "AddThreadCore", CharSet = CharSet.Auto)]
-        public static extern void AddThreadCore(byte[] name);
+        private static extern void AddThreadCore(byte[] name);
         [DllImport("LoggerCore.dll", EntryPoint = "InitCore1", CharSet = CharSet.Auto,CallingConvention = CallingConvention.StdCall)]
-        public static extern void InitCore1(byte[] path, byte[] name);
+        private static extern void InitCore1(byte[] path, byte[] name);
         [DllImport("LoggerCore.dll", EntryPoint = "InitCore2", CharSet = CharSet.Auto)]
-        public static extern void InitCore2(byte[] path, byte[] name, int maxBuf);
+        private static extern void InitCore2(byte[] path, byte[] name, int maxBuf);
         [DllImport("LoggerCore.dll", EntryPoint = "RunCore", CharSet = CharSet.Auto)]
-        public static extern void RunCore();
+        private static extern void RunCore();
         [DllImport("LoggerCore.dll", EntryPoint = "DebugCore", CharSet = CharSet.Auto)]
-        public static extern void DebugCore(byte[] className, byte[] funName,int lineNum, byte[] message);
+        private static extern void DebugCore(byte[] className, byte[] funName, int lineNum, byte[] message);
         [DllImport("LoggerCore.dll", EntryPoint = "InfoCore", CharSet = CharSet.Auto)]
-        public static extern void InfoCore(byte[] className, byte[] funName, int lineNum, byte[] message);
+        private static extern void InfoCore(byte[] className, byte[] funName, int lineNum, byte[] message);
         [DllImport("LoggerCore.dll", EntryPoint = "WarnCore", CharSet = CharSet.Auto)]
-        public static extern void WarnCore(byte[] className, byte[] funName, int lineNum, byte[] message);
+        private static extern void WarnCore(byte[] className, byte[] funName, int lineNum, byte[] message);
         [DllImport("LoggerCore.dll", EntryPoint = "ErrorCore", CharSet = CharSet.Auto)]
-        public static extern void ErrorCore(byte[] className, byte[] funName, int lineNum, byte[] message);
+        private static extern void ErrorCore(byte[] className, byte[] funName, int lineNum, byte[] message);
         [DllImport("LoggerCore.dll", EntryPoint = "FinishCore", CharSet = CharSet.Auto)]
-        public static extern void FinishCore();
+        private static extern void FinishCore();
 
         private static Logger logger = null;
         private static object padlock = new object();
@@ -82,28 +82,29 @@ namespace LoggerCsharp
         {
             string className = GetClassName();
             string funName = GetMethodName();
-            DebugCore(GetCharArray(className),GetCharArray(funName),GetLineName(),GetCharArray(message));
+            //int num = GetLineNum();
+            DebugCore(GetCharArray(className), GetCharArray(funName), GetLineNum(), GetCharArray(message));
         }
 
         public void Info(string message)
         {
             string className = GetClassName();
             string funName = GetMethodName();
-            InfoCore(GetCharArray(className), GetCharArray(funName), GetLineName(), GetCharArray(message));
+            InfoCore(GetCharArray(className), GetCharArray(funName), GetLineNum(), GetCharArray(message));
         }
 
         public void Warn(string message)
         {
             string className = GetClassName();
             string funName = GetMethodName();
-            WarnCore(GetCharArray(className), GetCharArray(funName), GetLineName(), GetCharArray(message));
+            WarnCore(GetCharArray(className), GetCharArray(funName), GetLineNum(), GetCharArray(message));
         }
 
         public void Error(string message)
         {
             string className = GetClassName();
             string funName = GetMethodName();
-            ErrorCore(GetCharArray(className), GetCharArray(funName), GetLineName(), GetCharArray(message));
+            ErrorCore(GetCharArray(className), GetCharArray(funName), GetLineNum(), GetCharArray(message));
         }
 
         public void Finish()
@@ -136,10 +137,11 @@ namespace LoggerCsharp
             return mb.Name;
         }
         
-        private int GetLineName()
+        private int GetLineNum()
         {
             StackTrace ss = new StackTrace(true);
-            return ss.GetFrame(2).GetFileLineNumber();
+            int num =  ss.GetFrame(2).GetFileLineNumber();
+            return num;
         }
         
         private MethodBase GetMethodBase()

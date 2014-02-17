@@ -205,7 +205,7 @@ LOGGERCORE_API void __stdcall InitCore1(const char* fpath,const char* swname)
 	PathParse(fpath);
 	//libVersion += libver;
 	filePath += fpath;
-	softwareName += swname;
+	softwareName.assign(swname);
 	//printf("path:%s, name:%s\n",fpath,swname);
 	InitCore();
 }
@@ -214,7 +214,7 @@ LOGGERCORE_API void __stdcall InitCore2(const char* fpath,const char* swname,int
 {
 	PathParse(fpath);
 	filePath += fpath;
-	softwareName += swname;
+	softwareName.assign(swname);
 	maxBuffer = mb;
 	InitCore();
 }
@@ -320,6 +320,7 @@ LOGGERCORE_API void __stdcall FinishCore()
 {
 	fout.flush();
 	fout.close();
+	threadMap.clear();
 	//printf("Finish\n");
 }
 

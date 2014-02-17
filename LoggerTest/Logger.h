@@ -43,7 +43,7 @@ private:
 	//LogInfo logInfo;
 
 	Logger(void);
-	string GetTime();
+	//string GetTime();
 	//void SetFilePath(string path);
 	//void SetMaxBuffer(int count);
 	//void Add(string level,string className,string funName,string message);
